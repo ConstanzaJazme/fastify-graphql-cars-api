@@ -1,5 +1,9 @@
 import { Schema, Document, model, Model } from 'mongoose';
 
+export interface carParams {
+    id: string;
+}
+
 export interface CarAttrs {
     title: string;
     brand: string;

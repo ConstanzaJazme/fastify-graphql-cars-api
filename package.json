@@ -23,6 +23,9 @@
   "homepage": "https://github.com/ConstanzaJazme/fastify-graphql-api#readme",
   "dependencies": {
     "fastify": "^3.28.0",
+    "graphql": "^16.3.0",
+    "mercurius": "^9.3.6",
+    "mongoose": "^6.3.0",
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
