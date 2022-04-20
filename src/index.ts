@@ -1,11 +1,10 @@
-import { fastify } from 'fastify';
-const server = fastify({
-    logger: true
-});
+import { server } from "./app";
+
+const port = process.env.PORT || 7000;
 
 const start = async () => {
     try {
-        await server.listen(7000);
+        await server.listen(port);
         console.log('Server started successfully');
     } catch (err) {
         server.log.error(err);
