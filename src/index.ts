@@ -1,15 +1,39 @@
-import { server } from "./app";
+import { ApolloServer } from 'apollo-server-fastify';
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { ApolloServerPlugin } from 'apollo-server-plugin-base';
+import { FastifyInstance } from 'fastify';
+import { typeDefs, resolvers } from "./schema/index.schema";
+
+import app from "./app";
 
 const port = process.env.PORT || 7000;
 
-const start = async () => {
-    try {
-        await server.listen(port);
-        console.log('Server started successfully');
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
-};
+function fastifyAppClosePlugin(app: FastifyInstance): ApolloServerPlugin {
+    return {
+        async serverWillStart() {
+            return {
+                async drainServer() {
+                    await app.close();
+                },
+            };
+        },
+    };
+}
 
-start();
+const startApolloServer = async() => {
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        plugins: [
+            fastifyAppClosePlugin(app),
+            ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
+        ],
+    });
+
+    await server.start();
+    app.register(server.createHandler());
+    await app.listen(port);
+    console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
+}
+
+startApolloServer()
